@@ -14,7 +14,7 @@ use HTML::TreeBuilder;
 use strict;
 use vars qw($VERSION $METHODS);
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 $METHODS = {
 	start_document => 1,
 	end_document => 1,
