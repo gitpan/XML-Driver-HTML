@@ -1,10 +1,9 @@
 #!/usr/bin/perl
 #
-# Copyright (c) 2000 Michael Koehne <kraehe@copyleft.de>
+# Copyright (c) 2001 Michael Koehne <kraehe@copyleft.de>
 #
-# XML::Driver::HTML is not so free software. You can redistribute
-# this copy under terms of the NotSoFree-License included within this
-# distribution.
+# XML::Filter::HTML is free software. You can redistribute and/or modify
+# this copy under terms of the GNU General Public License.
 
 use strict;
 use XML::Handler::YAWriter;
@@ -56,7 +55,7 @@ lets look what we additonal need for processing batches.
 =head1 AUTHOR
 
   Michael Koehne, Kraehe@Copyleft.De
-  (c) 2000 NotSoFree License
+  (c) 2000 GNU General Public License
 
 =head1 SEE ALSO
 

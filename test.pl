@@ -1,10 +1,9 @@
 # XML::Driver::HTML
 #
-# Copyright (c) 2000 Michael Koehne <kraehe@copyleft.de>
+# Copyright (c) 2001 Michael Koehne <kraehe@copyleft.de>
 #
-# XML::Driver::HTML is not so free software. You can redistribute
-# this copy under terms of the NotSoFree-License included within this
-# distribution.
+# XML::Filter::HTML is free software. You can redistribute and/or modify
+# this copy under terms of the GNU General Public License.
 
 use strict;
 use XML::Handler::YAWriter;

@@ -2,9 +2,8 @@
 #
 # Copyright (c) 2000 Michael Koehne <kraehe@copyleft.de>
 #
-# XML::Driver::HTML is not so free software. You can use and redistribute
-# this copy under terms of the NotSoFree-License included within this
-# distribution.
+# XML::Driver::HTML is free software. You can use and redistribute
+# this copy under terms of the GNU General Public License.
 
 use 5.006;
 no warnings 'utf8' ;
@@ -15,7 +14,7 @@ use HTML::TreeBuilder;
 use strict;
 use vars qw($VERSION $METHODS);
 
-$VERSION = '0.01';
+$VERSION = '0.05';
 $METHODS = {
 	start_document => 1,
 	end_document => 1,
@@ -71,6 +70,7 @@ sub parse {
 
     delete $self->{'Recode'};
     $self->{'Recode'} = 1 if lc($self->{'Source'}{'Encoding'}) eq "iso-8859-1";
+    $self->{'Recode'} = 1 if lc($self->{'Source'}{'Encoding'}) eq "iso88591";
     $self->{'Recode'} = 1 if lc($self->{'Source'}{'Encoding'}) eq "latin1";
 
     $self->{'Handler'}->start_document()
@@ -90,15 +90,20 @@ sub dumptree {
     my $tag = $element->{'_tag'};
     my $cont = $element->{'_content'};
     my $attr = {};
+    my $value;
 
     return if $tag eq "style";
 
     if ($tag) {
     	if ($self->{'Recode'}) {
-	    foreach (keys %$element) {
-	        ($attr->{$_} = $element->{$_}) =~ tr/\0-\xff//CU
-			if $_ !~ '^_';
-	    }
+            foreach (keys %$element) {
+                if ($_ !~ '^_') {
+                    $value = $element->{$_};
+                    $value =~
+                        s/([\x80-\xFF])/chr(0xC0|ord($1)>>6).chr(0x80|ord($1)&0x3F)/eg;
+                    $attr->{$_} = $value;
+                }
+            }
 	} else {
 	    foreach (keys %$element) {
 	        $attr->{$_} = $element->{$_}
@@ -116,9 +121,8 @@ sub dumptree {
 		if (ref $_ eq 'HTML::Element') {
 		    $self->dumptree($_)
 		} else {
-		    if ($self->{'Recode'}) {
-			tr/\0-\xff//CU;
-		    }
+                    s/([\x80-\xFF])/chr(0xC0|ord($1)>>6).chr(0x80|ord($1)&0x3F)/eg
+                        if $self->{'Recode'};
 		    $self->{'Handler'}->characters( { 'Data' => $_ } )
 			if ($self->{'Methods'}{'characters'} && (lc($_) !~ "^[ \t]*<!"));
 		}
@@ -239,7 +243,7 @@ A string containing the document.
 
 =item SystemId         
 
-The system identifier (URI) of the document.
+The system identifier (URL) of the document.
 
 =item Encoding
 
@@ -267,12 +271,13 @@ not yet implemented:
 other bugs:
 
     HTML::Parser and HTML::TreeBuilder bugs concerning DOCTYPE and CSS.
-    The NotSoFree License is incompatible to the GNU General Public License.
+    Perl handling of UFT8 is compatible between different versions. So
+    you need exactly Perl 5.6.0, not lower not higher.
 
 =head1 AUTHOR
 
   Michael Koehne, Kraehe@Copyleft.De
-  (c) 2000 NotSoFree License
+  (c) 2001 GNU General Public License
 
 =head1 SEE ALSO
 
